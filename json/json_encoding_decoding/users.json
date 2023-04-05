@@ -1,0 +1,18 @@
+[
+	{
+		"username": "abc"
+	},
+	{
+		"username": "god",
+		"perms": {
+			"admin": true
+		}
+	},
+	{
+		"username": "devil",
+		"perms": {
+			"write": true
+		}
+	}
+]
+[{ map[]} { map[admin:true]} { map[write:true]}]
