@@ -20,12 +20,12 @@ func main() {
 		}
 	}
 
-	for _, num := range numSlice {
+	for _, num := range n`umSlice {
 		if isPrime(num) {
 			primeSlice = append(primeSlice, num)
 		}
 	}
-	fmt.Println("list of prime numbers:",primeSlice)
+	fmt.Println("list of prime numbers:", primeSlice)
 }
 
 func isPrime(num int) bool {
