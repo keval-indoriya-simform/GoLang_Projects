@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// This is a struct for storing user details
 type User struct {
 	CardNum  int
 	UserName string
@@ -19,6 +20,7 @@ type User struct {
 	logs     []Log
 }
 
+// This is a struct for storing log for user's transaction
 type Log struct {
 	TransactionId     int
 	DateTime          string
@@ -28,23 +30,27 @@ type Log struct {
 	ClosingBalance    float64
 }
 
+// This methods are for sorting the struct slice by transactionId
 type ById []Log
 
 func (a ById) Len() int           { return len(a) }
 func (a ById) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ById) Less(i, j int) bool { return a[i].TransactionId > a[j].TransactionId }
 
+// This is an reader which takes input from user
 var inputReader = bufio.NewReader(os.Stdin)
 
 const (
-	lengthOfSeperator = 40
+	lengthOfSeperator = 55 // This is lenght of seperator used for seperating input and outputs
 )
 
 func main() {
+
 	var (
-		try int = 1
+		try int = 1 // This variable is used to look how many times user enterd pin
 	)
 
+	// This slice will store user structs
 	users := []User{
 		{555544443333, "Keval", 7123, 50000, []Log{
 			{1, "08/10/2022 15:04:05", "Credit", 25000.00, 0.00, 25000.00},
@@ -54,33 +60,37 @@ func main() {
 			{1, "10/02/2023 15:04:05", "Credit", 25000.00, 0.00, 25000.00},
 			{2, "18/03/2023 12:40:44", "Credit", 20000.00, 25000.00, 45000.00},
 		}},
-		{123443211234, "Hari", 6454, 80000.00, []Log{
+		{123443211234, "sdjfhgjkf", 6454, 80000.00, []Log{
 			{1, "08/10/2022 18:04:05", "Credit", 35000.00, 0.00, 35000.00},
 			{2, "08/12/2022 13:15:30", "Credit", 45000.00, 35000.00, 80000.00},
 		}},
 	}
 
+	fmt.Println(strings.Repeat("-", lengthOfSeperator))
 	fmt.Println("Enter Card Number : ")
-	cardStr, _ := inputReader.ReadString('\n')
-
-	cardNo, ok := strToNum(cardStr)
+	cardStr, _ := inputReader.ReadString('\n') // This will read string from consol
+	cardNo, ok := strToNum(cardStr)            // This will convert string to int
 	if ok {
-		index := userIndex(users, cardNo)
+		index := userIndex(users, cardNo) // This function will get the index of user who has that card number
 		if index >= 0 {
 
+			// This is pin entering portion
 		pinDiv:
+			fmt.Println(strings.Repeat("-", lengthOfSeperator))
 			fmt.Println("Enter 4 Digit PIN")
-			pinStr, _ := inputReader.ReadString('\n')
-			pin, ok := strToNum(pinStr)
+			pinStr, _ := inputReader.ReadString('\n') // This will read string from consol
+			pin, ok := strToNum(pinStr)               // This will convert string to int
 			pinStr = strings.Trim(pinStr, "\n")
 			pinStr = strings.Trim(pinStr, " ")
 			if ok {
+				// Checking if given pin is correct or not
 				if pin == users[index].PIN {
 					for {
+						// This portion will display menu on consol
 						fmt.Println(strings.Repeat("=", lengthOfSeperator))
-						fmt.Println("Hello,", users[index].UserName)
+						fmt.Printf("%27s, %-27s\n", "Hello", users[index].UserName)
 						fmt.Println(strings.Repeat("=", lengthOfSeperator))
-						fmt.Println("Main Menu")
+						fmt.Printf("%32s\n", "Main menu")
 						fmt.Println(strings.Repeat("=", lengthOfSeperator))
 						fmt.Println("1. >> View Balance")
 						fmt.Println("2. >> View Transactions")
@@ -89,40 +99,43 @@ func main() {
 						fmt.Println("5. >> Exit")
 						fmt.Println(strings.Repeat("=", lengthOfSeperator))
 
+						// This portion will call perticular functions that operation will be performed
 					choiseDiv:
 						fmt.Println("Enter which action you want to perform :")
-						choiseStr, _ := inputReader.ReadString('\n')
-						choise, ok := strToNum(choiseStr)
+						choiseStr, _ := inputReader.ReadString('\n') // This will read string from consol
+						choise, ok := strToNum(choiseStr)            // This will convert string to int
 						if ok {
 							switch choise {
 							case 1:
-								viewBalance(&users[index])
+								viewBalance(&users[index]) // This function will display the user balance
 								if isContinue() {
 									continue
 								} else {
 									os.Exit(0)
 								}
 							case 2:
-								viewTransactions(&users[index])
+								viewTransactions(&users[index]) // This function will display all the transaction on consol
 							case 3:
-								Deposit(&users[index])
+								Deposit(&users[index]) // This function will Credit ammount into your account
 							case 4:
-								withdrawal(&users[index])
+								withdrawal(&users[index]) // This function will Debit ammount from your account
 							case 5:
-								os.Exit(0)
+								os.Exit(0) // to exit from program
 							default:
 								fmt.Println(strings.Repeat("-", lengthOfSeperator))
-								fmt.Println("You Enterd Wrong choise\nplease enter only values whice are present in screen")
+								fmt.Println("You Entered Wrong choise\nplease enter only values whice are present in Menu")
 								fmt.Println(strings.Repeat("-", lengthOfSeperator))
 								goto choiseDiv
 							}
 						} else {
+							// if you enter somethingthat is not in option this will take you back to main menu section
 							goto choiseDiv
 						}
 
 					}
 				} else {
-
+					// This else part will keep track of pin tries if you give your pin wrong three times
+					// then it will exit the program
 					try++
 					if try == 4 {
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
@@ -155,31 +168,15 @@ func main() {
 				goto pinDiv
 			}
 		} else {
+			// If you enter any wrong card number porgram will get close
 			fmt.Println("Card Number is Not Found!! (User Not Found)")
 		}
 
-		// for _, user := range users {
-		// 	if cardNo == user.CardNum {
-		// 		fmt.Println("Enter 4 Digit PIN")
-		// 		pinStr, _ := inputReader.ReadString('\n')
-		// 		pin, ok := strToNum(pinStr)
-		// 		if ok {
-		// 			if pin == user.PIN {
-		// 				fmt.Println("Hello,", user.UserName)
-		// 				fmt.Println(strings.Repeat("=", lengthOfSeperator))
-		// 				fmt.Println("MAIN MENU")
-		// 				fmt.Println(strings.Repeat("=", lengthOfSeperator))
-		// 				break
-		// 			} else {
-		// 				fmt.Println("Your Pin is wrong")
-		// 			}
-		// 		}
-		// 	}
-		// }
 	}
 
 }
 
+// This function will convert given string to int
 func strToNum(str string) (int, bool) {
 	str = strings.Trim(str, "\n")
 	str = strings.Trim(str, " ")
@@ -188,11 +185,12 @@ func strToNum(str string) (int, bool) {
 		return num, true
 	}
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
-	fmt.Println("You Enter Something else but only numbers are required")
+	fmt.Println("You Entered Something else but only numbers are required")
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
 	return 0, false
 }
 
+// This function will convert given string to float64
 func ammountToFloat(str string) (float64, bool) {
 	str = strings.Trim(str, "\n")
 	str = strings.Trim(str, " ")
@@ -202,11 +200,13 @@ func ammountToFloat(str string) (float64, bool) {
 		return num, true
 	}
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
-	fmt.Println("You Enter alphabets but required number only")
+	fmt.Println("You Entered Something else but only numbers are required")
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
 	return 0, false
 }
 
+// This function will return the index where your card number is matched
+// if not found it will return -1
 func userIndex(users []User, cardNo int) int {
 	for i, user := range users {
 		if user.CardNum == cardNo {
@@ -216,12 +216,15 @@ func userIndex(users []User, cardNo int) int {
 	return -1
 }
 
+// This function will display the balance of that perticular user in consol
+// user is passed by reference
 func viewBalance(user *User) {
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
 	fmt.Printf("Your Balance is : %.2f\n", user.Balance)
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
 }
 
+// This function will display all the logs of that perticular user in consol
 func viewTransactions(user *User) {
 	fmt.Println(strings.Repeat("-", 110))
 	fmt.Printf("%-25s %-20s %20s %20s %20s\n", "Date and Time", "Type of Transaction", "Amount", "Opening Balance", "Closing Balance")
@@ -238,6 +241,7 @@ func viewTransactions(user *User) {
 	}
 }
 
+// This function will Credit ammount into perticular user's account
 func Deposit(user *User) {
 	typeOfTransaction := "Credit"
 	openingBalance := user.Balance
@@ -247,10 +251,13 @@ func Deposit(user *User) {
 	amt, ok := ammountToFloat(amtStr)
 	if ok {
 		if amt > 0 {
-			if amt > 100 {
+			if amt > 50000 {
+				fmt.Println(strings.Repeat("-", lengthOfSeperator))
+				fmt.Println("Deposite ammount sholud be less than 50000 Rs.")
+				fmt.Println(strings.Repeat("-", lengthOfSeperator))
+			} else if amt > 100 {
 				user.Balance += amt
-				closingBalance := user.Balance
-				createLog(user, typeOfTransaction, amt, openingBalance, closingBalance)
+				createLog(user, typeOfTransaction, amt, openingBalance, user.Balance)
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				fmt.Println("Transaction Successful")
 				viewBalance(user)
@@ -274,6 +281,7 @@ func Deposit(user *User) {
 	}
 }
 
+// This function will Debit ammount from account
 func withdrawal(user *User) {
 	typeOfTransaction := "Debit"
 	openingBalance := user.Balance
@@ -289,10 +297,13 @@ func withdrawal(user *User) {
 					fmt.Println("You cant not withdrawal amount grater than 50000 Rs.")
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				} else if math.Mod(amt, 100) == 0 {
+					// To check if ammount is in multiple of 100
+
 					if amt <= user.Balance-500 {
+						// To check user has atleast 500 Rs. after completion of Debit
+						// if yes do debit other wise cancle that
 						user.Balance -= amt
-						closingBalance := user.Balance
-						createLog(user, typeOfTransaction, amt, openingBalance, closingBalance)
+						createLog(user, typeOfTransaction, amt, openingBalance, user.Balance)
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						fmt.Println("Transaction Successful")
 						viewBalance(user)
@@ -329,6 +340,7 @@ func withdrawal(user *User) {
 	}
 }
 
+// This function will do the enry in log slice if Cradit or Debit is occured
 func createLog(user *User, typeOfTransaction string, amount float64, openingBalance float64, closingBalance float64) {
 	date := time.Now()
 	newdate := date.Format("01/02/2006 15:04:05")
@@ -338,6 +350,8 @@ func createLog(user *User, typeOfTransaction string, amount float64, openingBala
 	user.logs = append(user.logs, newlog)
 }
 
+// This function is used when any transcation is get finishit and we wnat to ask user
+// if he want to continue the another transaction or hw want to exit the program
 func isContinue() bool {
 continueTransaction:
 	fmt.Println("Do you want to Continue (yes,y / no,n) :")
