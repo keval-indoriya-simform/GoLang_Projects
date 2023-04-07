@@ -213,7 +213,6 @@ func strToNum(str string) (int, bool) {
 func ammountToFloat(str string) (float64, bool) {
 	str = strings.Trim(str, "\n")
 	str = strings.Trim(str, " ")
-	str = strings.ReplaceAll(str, ",", "")
 	num, err := strconv.ParseFloat(str, 64)
 	if err == nil {
 		return num, true
@@ -262,6 +261,7 @@ func viewTransactions(user *User) {
 
 // This function will Credit ammount into perticular user's account
 func Deposit(user *User) {
+depositDiv:
 	typeOfTransaction := "Credit"
 	openingBalance := user.Balance
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
@@ -274,16 +274,28 @@ func Deposit(user *User) {
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				fmt.Println("Deposite ammount sholud be less than 50000 Rs.")
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
-			} else if amt > 100 {
-				user.Balance += amt
-				createLog(user, typeOfTransaction, amt, openingBalance, user.Balance)
-				fmt.Println(strings.Repeat("-", lengthOfSeperator))
-				fmt.Println("Transaction Successful")
-				viewBalance(user)
+			} else if amt >= 500 {
+				if math.Mod(amt, 500) == 0 {
+					user.Balance += amt
+					createLog(user, typeOfTransaction, amt, openingBalance, user.Balance)
+					fmt.Println(strings.Repeat("-", lengthOfSeperator))
+					fmt.Println("Transaction Successful")
+					viewBalance(user)
+					if isContinue() {
+						return
+					} else {
+						os.Exit(0)
+					}
+				} else {
+					fmt.Println(strings.Repeat("-", lengthOfSeperator))
+					fmt.Println("Transaction Failed")
+					fmt.Println("Amount sholud be multiple of 500")
+					fmt.Println(strings.Repeat("-", lengthOfSeperator))
+				}
 			} else {
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				fmt.Println("Transaction Failed")
-				fmt.Println("You have to Deposite Minimum 100 Rs.")
+				fmt.Println("You have to Deposite Minimum 500 Rs.")
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
 			}
 		} else {
@@ -294,7 +306,7 @@ func Deposit(user *User) {
 		}
 	}
 	if isContinue() {
-		return
+		goto depositDiv
 	} else {
 		os.Exit(0)
 	}
@@ -302,6 +314,7 @@ func Deposit(user *User) {
 
 // This function will Debit ammount from account
 func withdrawal(user *User) {
+withdrawalDiv:
 	typeOfTransaction := "Debit"
 	openingBalance := user.Balance
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
@@ -315,7 +328,7 @@ func withdrawal(user *User) {
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 					fmt.Println("You cant not withdrawal amount grater than 50000 Rs.")
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
-				} else if math.Mod(amt, 100) == 0 {
+				} else if math.Mod(amt, 500) == 0 {
 					// To check if ammount is in multiple of 100
 
 					if amt <= user.Balance-500 {
@@ -326,6 +339,11 @@ func withdrawal(user *User) {
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						fmt.Println("Transaction Successful")
 						viewBalance(user)
+						if isContinue() {
+							return
+						} else {
+							os.Exit(0)
+						}
 					} else {
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						fmt.Println("Transaction Failed")
@@ -337,7 +355,7 @@ func withdrawal(user *User) {
 				} else {
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 					fmt.Println("Transaction Failed")
-					fmt.Println("Amount sholud be multiple of 100")
+					fmt.Println("Amount sholud be multiple of 500")
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				}
 
@@ -357,7 +375,7 @@ func withdrawal(user *User) {
 	}
 
 	if isContinue() {
-		return
+		goto withdrawalDiv
 	} else {
 		os.Exit(0)
 	}

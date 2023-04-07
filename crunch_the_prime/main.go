@@ -20,7 +20,7 @@ func main() {
 		}
 	}
 
-	for _, num := range n`umSlice {
+	for _, num := range numSlice {
 		if isPrime(num) {
 			primeSlice = append(primeSlice, num)
 		}
