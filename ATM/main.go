@@ -41,7 +41,7 @@ func (a ById) Less(i, j int) bool { return a[i].TransactionId > a[j].Transaction
 var inputReader = bufio.NewReader(os.Stdin)
 
 const (
-	lengthOfSeperator = 55 // This is lenght of seperator used for seperating input and outputs
+	lengthOfSeperator = 58 // This is lenght of seperator used for seperating input and outputs
 )
 
 func main() {
@@ -60,16 +60,19 @@ func main() {
 			{1, "10/02/2023 15:04:05", "Credit", 25000.00, 0.00, 25000.00},
 			{2, "18/03/2023 12:40:44", "Credit", 20000.00, 25000.00, 45000.00},
 		}},
-		{123443211234, "sdjfhgjkf", 6454, 80000.00, []Log{
+		{123443211234, "Hari", 6454, 80000.00, []Log{
 			{1, "08/10/2022 18:04:05", "Credit", 35000.00, 0.00, 35000.00},
 			{2, "08/12/2022 13:15:30", "Credit", 45000.00, 35000.00, 80000.00},
 		}},
 	}
 
+cardNumDiv:
 	fmt.Println(strings.Repeat("-", lengthOfSeperator))
 	fmt.Println("Enter Card Number : ")
 	cardStr, _ := inputReader.ReadString('\n') // This will read string from consol
-	cardNo, ok := strToNum(cardStr)            // This will convert string to int
+	cardStr = strings.Trim(cardStr, "\n")
+	cardStr = strings.Trim(cardStr, " ")
+	cardNo, ok := strToNum(cardStr) // This will convert string to int
 	if ok {
 		index := userIndex(users, cardNo) // This function will get the index of user who has that card number
 		if index >= 0 {
@@ -120,10 +123,13 @@ func main() {
 							case 4:
 								withdrawal(&users[index]) // This function will Debit ammount from your account
 							case 5:
+								fmt.Println(strings.Repeat("-", lengthOfSeperator))
+								fmt.Println("Thank you for chossing our Bank")
+								fmt.Println(strings.Repeat("-", lengthOfSeperator))
 								os.Exit(0) // to exit from program
 							default:
 								fmt.Println(strings.Repeat("-", lengthOfSeperator))
-								fmt.Println("You Entered Wrong choise\nplease enter only values whice are present in Menu")
+								fmt.Println("You Entered Wrong choise\nPlease enter only values whice are present in Menu")
 								fmt.Println(strings.Repeat("-", lengthOfSeperator))
 								goto choiseDiv
 							}
@@ -139,17 +145,19 @@ func main() {
 					try++
 					if try == 4 {
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
-						fmt.Println("You have exceeded the pin trying limit")
+						fmt.Println("You have exceeded the PIN trying limit")
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
-
+						fmt.Println("Thank you for chossing our Bank")
+						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						os.Exit(0)
 					} else {
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						if len(pinStr) != 4 {
 							fmt.Println("PIN length should be 4")
+							fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						}
 						fmt.Println("This is Try number", try, "(After this", 3-try, "try will be left)")
-						fmt.Println(strings.Repeat("-", lengthOfSeperator))
+						// fmt.Println(strings.Repeat("-", lengthOfSeperator))
 
 					}
 					goto pinDiv
@@ -158,18 +166,29 @@ func main() {
 				try++
 				if try == 4 {
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
-					fmt.Println("You have exceeded the pin trying limit")
+					fmt.Println("You have exceeded the PIN trying limit")
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
-
+					fmt.Println("Thank you for chossing our Bank")
+					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 					os.Exit(0)
 				}
 				fmt.Println("This is Try number", try, "(After this", 3-try, "try will be left)")
-				fmt.Println(strings.Repeat("-", lengthOfSeperator))
+				// fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				goto pinDiv
 			}
+		} else if len(cardStr) != 12 {
+			// To check you entered valid length of numbers in card number
+			fmt.Println(strings.Repeat("-", lengthOfSeperator))
+			fmt.Println("Please enter Valid 12 digit Card Number")
+			goto cardNumDiv
 		} else {
 			// If you enter any wrong card number porgram will get close
+			fmt.Println(strings.Repeat("-", lengthOfSeperator))
 			fmt.Println("Card Number is Not Found!! (User Not Found)")
+			fmt.Println(strings.Repeat("-", lengthOfSeperator))
+			fmt.Println("Thank you for chossing our Bank")
+			fmt.Println(strings.Repeat("-", lengthOfSeperator))
+			os.Exit(0)
 		}
 
 	}
@@ -310,21 +329,25 @@ func withdrawal(user *User) {
 					} else {
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						fmt.Println("Transaction Failed")
+						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 						fmt.Println("Insufficiant Balance!!\nyou also need to maintain minimum 500 in account")
 						fmt.Println(strings.Repeat("-", lengthOfSeperator))
 					}
+
 				} else {
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 					fmt.Println("Transaction Failed")
 					fmt.Println("Amount sholud be multiple of 100")
 					fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				}
+
 			} else {
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
 				fmt.Println("Transaction Failed")
 				fmt.Println("Minimum Withdrawal have to be 500 Rs.")
 				fmt.Println(strings.Repeat("-", lengthOfSeperator))
 			}
+
 		} else {
 			fmt.Println(strings.Repeat("-", lengthOfSeperator))
 			fmt.Println("Transaction Failed")
@@ -364,6 +387,9 @@ continueTransaction:
 	case "yes", "y":
 		return true
 	case "no", "n":
+		fmt.Println(strings.Repeat("-", lengthOfSeperator))
+		fmt.Println("Thank you for chossing our Bank")
+		fmt.Println(strings.Repeat("-", lengthOfSeperator))
 		return false
 	default:
 		fmt.Println(strings.Repeat("-", lengthOfSeperator))
