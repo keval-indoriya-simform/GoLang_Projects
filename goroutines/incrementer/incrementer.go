@@ -11,7 +11,7 @@ type Container struct {
 }
 
 func (c *Container) incr(name string) {
-	// it will lock the variable while this goroutine is writing somethig on that
+	// it will lock the variable while this goroutine is writing something on that
 	c.mut.Lock()
 	// with defer at last it will unlock the variable
 	defer c.mut.Unlock()
@@ -30,7 +30,7 @@ func main() {
 		for i := 0; i < n; i++ {
 			c.incr(name)
 		}
-		// this will tell wait group that i am responed and my task is over
+		// this will tell wait group that I am Responded and my task is over
 		wg.Done()
 	}
 

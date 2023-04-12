@@ -33,7 +33,7 @@ func main() {
 	p1 := Person{"keval", 25}
 	p2 := Person{"abc", 25}
 	p3 := Person{"aba", 21}
-	p4 := Person{"abc", 21}
+	p4 := Person{"abc", 25}
 	p5 := Person{"keval", 21}
 	people := []Person{p1, p2, p3, p4, p5}
 

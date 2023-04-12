@@ -19,7 +19,7 @@ type circle struct {
 }
 
 type triangle struct {
-	side_a, side_b, side_c float64
+	sideA, sideB, sideC float64
 }
 
 func (r rect) area() float64 {
@@ -40,11 +40,11 @@ func (c circle) perim() float64 {
 
 func (t triangle) area() float64 {
 	s := t.perim() / 2
-	return math.Sqrt(s*(s-t.side_a)*(s-t.side_b)*(s-t.side_c))
+	return math.Sqrt(s * (s - t.sideA) * (s - t.sideB) * (s - t.sideC))
 }
 
 func (t triangle) perim() float64 {
-	return t.side_a + t.side_b + t.side_c
+	return t.sideA + t.sideB + t.sideC
 }
 
 func measure(g geometry) {
@@ -56,7 +56,7 @@ func measure(g geometry) {
 func main() {
 	r := rect{height: 4, width: 5}
 	c := circle{radius: 5}
-	t := triangle{side_a: 10, side_b: 10, side_c: 10}
+	t := triangle{sideA: 10, sideB: 10, sideC: 10}
 
 	measure(r)
 	measure(c)
