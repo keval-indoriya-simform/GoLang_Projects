@@ -1,4 +1,4 @@
-package Functions
+package functions
 
 // This function will return the index where your card number is matched
 // if not found it will return -1

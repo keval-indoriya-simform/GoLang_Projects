@@ -13,8 +13,8 @@ import (
 var (
 	//person = &models.Person{Name: "Keval", Email: "kevalindoriya5@gmail.com"}
 	//books  = []models.Book{
-	//	{Title: "Basics Of Golang", Author: "Google", CallNumber: 1234, PersonID: 1},
-	//	{Title: "Advance Of Golang", Author: "Google", CallNumber: 5678, PersonID: 1},
+	//	{Title: "The India Story", Author: "Bimal Jalal", CallNumber: 7123, PersonID: 1},
+	//	{Title: "Hear Yourself", Author: "Prem Rawat", CallNumber: 6454, PersonID: 1},
 	//}
 	db  *gorm.DB
 	err error

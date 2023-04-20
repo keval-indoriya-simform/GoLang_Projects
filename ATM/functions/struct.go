@@ -1,4 +1,4 @@
-package Functions
+package functions
 
 // This is a struct for storing user details
 type User struct {

@@ -1,3 +1,3 @@
-module ATM
+module functions
 
 go 1.20
