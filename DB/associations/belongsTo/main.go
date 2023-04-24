@@ -8,28 +8,28 @@ import (
 )
 
 type User struct {
-	ID   int `gorm:"primaryKey,autoIncrement"`
-	Name string
-	//CompaniesID int `gorm:"foreignKey:companies.id"`
-	Companies Company
+	gorm.Model
+
+	Name      string
+	CompanyID int
+	Company   Company `gorm:"references:id"`
 }
 
 type Company struct {
-	ID   int `gorm:"primaryKey,autoIncrement"`
-	Code string
+	gorm.Model
+
 	Name string
 }
 
 var (
 	user = User{
-		Name: "Keval",
-		//CompanyID: 1,
+		Name:      "meet",
+		CompanyID: 2,
 	}
 
-	cmp = Company{
-		Code: "SSL",
-		Name: "Simform Software LLP",
-	}
+	//cmp = Company{
+	//	Name: "tcs",
+	//}
 )
 
 func errorCheck(err error) {
@@ -65,8 +65,28 @@ func main() {
 	err = db.AutoMigrate(&Company{}, &User{})
 	errorCheck(err)
 
-	db.Create(&cmp)
-	fmt.Println(cmp.ID)
-	db.Create(&user)
-	fmt.Println(user.ID)
+	//db.Create(&cmp)
+	//fmt.Println(cmp.ID)
+	//db.Create(&user)
+	//fmt.Println(user.ID)
+
+	db.Create(&User{
+		Name: "Manish",
+		Company: Company{
+			Name: "isro",
+		},
+	})
+
+	var getUser []User
+	db.InnerJoins("Company").Find(&getUser)
+	if err != nil {
+		log.Fatal(err)
+	}
+	println("USER")
+	for i := range getUser {
+		fmt.Println(getUser[i])
+	}
+
+	db.Where("id = ")
+	//db.Where("id = 3").Delete(&Company{})
 }
