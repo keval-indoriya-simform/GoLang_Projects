@@ -14,9 +14,15 @@ func errorCheck(err error) {
 }
 
 type User struct {
+	ID          int
+	Name        string
+	CreditCards []CreditCard `gorm:"constraint:onUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type CreditCard struct {
+	ID     int
+	Number string
+	UserID int
 }
 
 func main() {
@@ -42,4 +48,60 @@ func main() {
 		errorCheck(err)
 		fmt.Println("Closing Database Connection")
 	}()
+
+	err = db.AutoMigrate(&User{}, &CreditCard{})
+	errorCheck(err)
+
+	db.Create(&[]User{
+		{
+			Name: "Keval",
+			CreditCards: []CreditCard{
+				{
+					Number: "555544443333",
+				},
+				{
+					Number: "123456789123",
+				},
+			},
+		},
+		{
+			Name: "Meet",
+			CreditCards: []CreditCard{
+				{
+					Number: "111144443333",
+				},
+			},
+		},
+		{
+			Name: "Hari",
+			CreditCards: []CreditCard{
+				{
+					Number: "222244443333",
+				},
+			},
+		},
+		{
+			Name: "Juhi",
+			CreditCards: []CreditCard{
+				{
+					Number: "333344443333",
+				},
+			},
+		},
+	})
+
+	GetAll(db)
+	//var user User
+	//db.First(&user, "id = 2").Delete(&user)
+	//fmt.Println("deleted")
+	//GetAll(db)
+}
+
+func GetAll(db *gorm.DB) {
+	var users []User
+	err := db.Model(&User{}).Preload("CreditCards").Find(&users).Error
+	errorCheck(err)
+	for i := range users {
+		fmt.Println(users[i])
+	}
 }
