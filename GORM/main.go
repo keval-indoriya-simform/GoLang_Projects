@@ -3,11 +3,10 @@ package main
 import (
 	"GORM/connection"
 	"GORM/models"
-	"GORM/routers"
+	"context"
 	"fmt"
 	"gorm.io/gorm"
 	"log"
-	"net/http"
 )
 
 var (
@@ -16,6 +15,7 @@ var (
 	//	{Title: "The India Story", Author: "Bimal Jalal", CallNumber: 7123, PersonID: 1},
 	//	{Title: "Hear Yourself", Author: "Prem Rawat", CallNumber: 6454, PersonID: 1},
 	//}
+	ctx context.Context
 	db  *gorm.DB
 	err error
 )
@@ -49,7 +49,8 @@ func main() {
 
 	var people []models.Person
 	var books []models.Book
-	db.Select("id", "name", "email").Find(&people)
+	//db.Select("id", "name", "email").Find(&people)
+	db.WithContext(ctx).Find(&people)
 
 	for i := range people {
 		err = db.Model(&people[i]).Select("title", "author", "call_number, person_id").Association("Books").Find(&books)
@@ -57,5 +58,6 @@ func main() {
 		people[i].Books = books
 	}
 
-	log.Fatal(http.ListenAndServe(":8080", routers.Router))
+	fmt.Println(people)
+	//log.Fatal(http.ListenAndServe(":8080", routers.Router))
 }
