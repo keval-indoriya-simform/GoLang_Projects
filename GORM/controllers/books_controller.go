@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"GORM/connection"
 	"GORM/models"
 	_ "context"
 	"encoding/json"
@@ -12,28 +11,43 @@ import (
 
 func GetBooks(writer http.ResponseWriter, request *http.Request) {
 	var books []models.Book
-
-	fmt.Println("Book")
-	db := connection.GetConnection()
-	db.Find(&books)
-
-	fmt.Println(books)
+	models.GetAllBooks(&books)
 	b, err := json.MarshalIndent(&books, "", "\t")
 	ErrorCheck(err)
 	fmt.Fprint(writer, string(b))
 }
 
 func GetBook(writer http.ResponseWriter, request *http.Request) {
-	var books []models.Book
+	var books models.Book
 	params := mux.Vars(request)
-
-	fmt.Println("Book With ID :", params["ID"])
-	db := connection.GetConnection()
-	db.Find(&books, params["ID"])
-
-	fmt.Println(books)
+	models.GetBookByID(&books, params["ID"])
 	b, err := json.MarshalIndent(&books, "", "\t")
 	ErrorCheck(err)
 	fmt.Fprintln(writer, "Book With ID :", params["ID"])
 	fmt.Fprint(writer, string(b))
+}
+
+func CreateBook(writer http.ResponseWriter, request *http.Request) {
+	var book models.Book
+	err := json.NewDecoder(request.Body).Decode(&book)
+	ErrorCheck(err)
+	models.AddBook(&book)
+	p, err := json.MarshalIndent(&book, "", "\t")
+	ErrorCheck(err)
+	fmt.Fprint(writer, string(p))
+}
+
+func DeleteBook(writer http.ResponseWriter, request *http.Request) {
+	var books models.Book
+	params := mux.Vars(request)
+	models.DeleteBookByID(&books, params["ID"])
+	fmt.Fprintln(writer, "Book With ID :", params["ID"], "Deleted")
+}
+
+func UpdateBook(writer http.ResponseWriter, request *http.Request) {
+	var books models.Book
+	err := json.NewDecoder(request.Body).Decode(&books)
+	ErrorCheck(err)
+	models.UpdateBookByID(&books)
+	fmt.Fprintln(writer, "Book With ID :", books.ID, "Updated")
 }

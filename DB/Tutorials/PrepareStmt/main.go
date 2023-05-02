@@ -28,7 +28,7 @@ func errorCheck(err error) {
 }
 
 func main() {
-	dbURI := fmt.Sprintf("host=localhost user=postgres dbname=Tutorials sslmode=disable password=Ke^@l081001 port=5432")
+	dbURI := fmt.Sprintf("host=localhost user=postgres dbname=Session sslmode=disable password=Ke^@l081001 port=5432")
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dbURI,

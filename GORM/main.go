@@ -3,10 +3,12 @@ package main
 import (
 	"GORM/connection"
 	"GORM/models"
+	"GORM/routers"
 	"context"
 	"fmt"
 	"gorm.io/gorm"
 	"log"
+	"net/http"
 )
 
 var (
@@ -47,17 +49,5 @@ func main() {
 	err = db.AutoMigrate(&models.Book{})
 	errorCheck(err)
 
-	var people []models.Person
-	var books []models.Book
-	//db.Select("id", "name", "email").Find(&people)
-	db.WithContext(ctx).Find(&people)
-
-	for i := range people {
-		err = db.Model(&people[i]).Select("title", "author", "call_number, person_id").Association("Books").Find(&books)
-		errorCheck(err)
-		people[i].Books = books
-	}
-
-	fmt.Println(people)
-	//log.Fatal(http.ListenAndServe(":8080", routers.Router))
+	log.Fatal(http.ListenAndServe(":8080", routers.Router))
 }

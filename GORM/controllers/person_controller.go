@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"GORM/connection"
 	"GORM/models"
 	"encoding/json"
 	"fmt"
@@ -18,40 +17,43 @@ func ErrorCheck(err error) {
 
 func GetPeople(writer http.ResponseWriter, request *http.Request) {
 	var people []models.Person
-	var books []models.Book
-
-	fmt.Println("People")
-	db := connection.GetConnection()
-	db.Find(&people)
-
-	for i := range people {
-		err := db.Model(&people[i]).Association("Books").Find(&books)
-		ErrorCheck(err)
-		people[i].Books = books
-	}
-	fmt.Println(people)
+	models.GetAllPeople(&people)
 	p, err := json.MarshalIndent(&people, "", "\t")
 	ErrorCheck(err)
 	fmt.Fprint(writer, string(p))
 }
 
 func GetPerson(writer http.ResponseWriter, request *http.Request) {
-	var people []models.Person
-	var books []models.Book
+	var people models.Person
 	params := mux.Vars(request)
-
-	fmt.Println("People With ID :", params["ID"])
-	db := connection.GetConnection()
-	db.Find(&people, params["ID"])
-
-	for i := range people {
-		err := db.Model(&people[i]).Association("Books").Find(&books)
-		ErrorCheck(err)
-		people[i].Books = books
-	}
-	fmt.Println(people)
+	models.GetPeopleByID(&people, params["ID"])
 	p, err := json.MarshalIndent(&people, "", "\t")
 	ErrorCheck(err)
 	fmt.Fprintln(writer, "People With ID :", params["ID"])
 	fmt.Fprint(writer, string(p))
+}
+
+func CreatePerson(writer http.ResponseWriter, request *http.Request) {
+	var people models.Person
+	err := json.NewDecoder(request.Body).Decode(&people)
+	ErrorCheck(err)
+	models.AddPerson(&people)
+	p, err := json.MarshalIndent(&people, "", "\t")
+	ErrorCheck(err)
+	fmt.Fprint(writer, string(p))
+}
+
+func DeletePerson(writer http.ResponseWriter, request *http.Request) {
+	var people models.Person
+	params := mux.Vars(request)
+	models.DeletePeopleByID(&people, params["ID"])
+	fmt.Fprintln(writer, "People With ID :", params["ID"], "Deleted")
+}
+
+func UpdatePerson(writer http.ResponseWriter, request *http.Request) {
+	var people models.Person
+	err := json.NewDecoder(request.Body).Decode(&people)
+	ErrorCheck(err)
+	models.UpdatePeopleByID(&people)
+	fmt.Fprintln(writer, "Person With ID :", people.ID, "Updated")
 }
